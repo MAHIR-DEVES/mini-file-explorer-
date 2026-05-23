@@ -1,36 +1,117 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# Mini File Explorer
 
-## Getting Started
+A simple file manager built with Next.js where you can create, rename, delete,
+and manage folders and files — kind of like a lightweight version of Windows
+Explorer but in the browser.
 
-First, run the development server:
+---
 
-```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
+## Why I built it this way
+
+I wanted to keep things straightforward. The whole file system lives in React
+state and gets saved to localStorage, so nothing is lost on refresh. I used a
+recursive component for the sidebar tree because that's honestly the cleanest
+way to handle nested folders — you don't know how deep the nesting goes, so
+recursion just makes sense.
+
+---
+
+## What you can do
+
+- Create folders and text files inside any folder
+- Rename anything by hovering over it
+- Delete files or folders (deleting a folder removes everything inside it)
+- Click a folder to see its contents in the main panel
+- Double-click a text file to open and edit it
+- Changes save automatically to localStorage
+
+---
+
+## Tech stack
+
+- **Next.js 16** — App Router
+- **TypeScript** — for type safety across the whole codebase
+- **Tailwind CSS** — utility-first styling, no separate CSS files needed
+- **lucide-react** — for the icons (folder, file, chevrons etc.)
+
+No backend. No database. Just the frontend.
+
+---
+
+## Project structure
+
+```
+mini-file-explorer/
+├── app/
+│   ├── page.tsx           # Entry point, wires everything together
+│   └── globals.css
+├── components/
+│   ├── Sidebar.tsx        # Left panel with the tree view
+│   ├── TreeNode.tsx       # Recursive component for each folder/file in the tree
+│   ├── MainPanel.tsx      # Right panel showing contents of selected folder
+│   └── FileEditor.tsx     # Opens when you click a text file
+├── hooks/
+│   └── useFileSystem.ts   # All the state logic lives here
+├── types/
+│   └── filesystem.ts      # TypeScript types
+└── utils/
+    └── fileSystem.ts      # Helper functions + initial mock data
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+---
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+## Getting started
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+```bash
+pnpm install
+pnpm dev
+```
 
-## Learn More
+Then open [http://localhost:3000](http://localhost:3000)
 
-To learn more about Next.js, take a look at the following resources:
+---
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+## How the data is structured
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+Each node in the tree is either a folder or a file:
 
-## Deploy on Vercel
+```typescript
+interface FileSystemNode {
+  id: string;
+  name: string;
+  type: 'folder' | 'file';
+  children?: FileSystemNode[]; // only folders have this
+  content?: string; // only files have this
+}
+```
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+The whole tree starts from a single root node and branches out from there. All
+operations (create, rename, delete, update content) go through the
+`useFileSystem` hook, which handles cloning the tree, making the change, and
+updating state.
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+---
+
+## A few decisions I made
+
+**localStorage over a backend** — The task didn't require persistence across
+devices or users, so localStorage is more than enough here. It also keeps the
+setup simple — no API routes, no database config.
+
+**Recursive TreeNode component** — I could have flattened the data and rendered
+it differently, but a recursive component mirrors the actual tree structure of
+the data, which makes it easier to reason about.
+
+**useFileSystem hook** — Keeping all the state logic in one place made it easy
+to test each operation in isolation and keep the components clean.
+
+---
+
+## Responsive design
+
+The layout adjusts for smaller screens. On mobile, the sidebar collapses and the
+main panel takes full width.
+
+---
+
+Built for Webbly Media — May 2026
