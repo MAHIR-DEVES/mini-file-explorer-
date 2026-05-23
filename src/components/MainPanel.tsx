@@ -120,12 +120,23 @@ const MainPanel = ({
             {contents.map(node => (
               <div
                 key={node.id}
-                className="group relative flex min-h-[120px] flex-col items-center justify-between rounded-lg border border-gray-200 p-4 transition hover:bg-gray-50 cursor-pointer"
-                onDoubleClick={() =>
-                  node.type === 'folder'
-                    ? onSelectFolder(node.id)
-                    : onOpenFile(node.id)
-                }
+                className="group relative flex min-h-[120px] flex-col items-center justify-between rounded-lg border border-gray-200 p-4 transition hover:bg-gray-50 cursor-pointer active:bg-gray-100"
+                onClick={() => {
+                  // Single click for mobile
+                  if (node.type === 'folder') {
+                    onSelectFolder(node.id);
+                  } else {
+                    onOpenFile(node.id);
+                  }
+                }}
+                onDoubleClick={() => {
+                  // Double click for desktop
+                  if (node.type === 'folder') {
+                    onSelectFolder(node.id);
+                  } else {
+                    onOpenFile(node.id);
+                  }
+                }}
               >
                 <div className="flex flex-col items-center gap-2 text-center">
                   {node.type === 'folder' ? (
@@ -144,17 +155,27 @@ const MainPanel = ({
                       autoFocus
                       value={renameValue}
                       onChange={e => setRenameValue(e.target.value)}
-                      onKeyDown={e => e.key === 'Enter' && handleRenameSave()}
+                      onKeyDown={e => {
+                        e.stopPropagation();
+                        if (e.key === 'Enter') handleRenameSave();
+                      }}
+                      onClick={e => e.stopPropagation()}
                       className="w-full max-w-[150px] px-1 text-xs border border-blue-400 rounded outline-none"
                     />
                     <button
-                      onClick={handleRenameSave}
+                      onClick={e => {
+                        e.stopPropagation();
+                        handleRenameSave();
+                      }}
                       className="text-green-600"
                     >
                       <Check size={12} />
                     </button>
                     <button
-                      onClick={() => setRenamingId(null)}
+                      onClick={e => {
+                        e.stopPropagation();
+                        setRenamingId(null);
+                      }}
                       className="text-red-500"
                     >
                       <X size={12} />
@@ -162,7 +183,32 @@ const MainPanel = ({
                   </div>
                 ) : null}
 
-                <div className="absolute top-2 right-2 hidden gap-1 group-hover:flex">
+                {/* Action buttons - visible on hover (desktop) and always on mobile in the grid */}
+                <div className="absolute top-2 right-2 flex gap-1 md:hidden">
+                  <button
+                    onClick={e => {
+                      e.stopPropagation();
+                      handleRenameStart(node);
+                    }}
+                    className="p-1 bg-white border border-gray-200 rounded shadow-sm active:bg-gray-100"
+                    title="Rename"
+                  >
+                    <Pencil size={14} className="text-gray-500" />
+                  </button>
+                  <button
+                    onClick={e => {
+                      e.stopPropagation();
+                      onDeleteNode(node.id);
+                    }}
+                    className="p-1 bg-white border border-gray-200 rounded shadow-sm active:bg-red-50"
+                    title="Delete"
+                  >
+                    <Trash2 size={14} className="text-red-500" />
+                  </button>
+                </div>
+
+                {/* Desktop: hidden by default, visible on hover */}
+                <div className="absolute top-2 right-2 hidden gap-1 group-hover:flex md:flex">
                   <button
                     onClick={e => {
                       e.stopPropagation();

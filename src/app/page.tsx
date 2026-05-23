@@ -45,7 +45,13 @@ export default function Home() {
 
       {/* Mobile Sidebar Overlay */}
       {sidebarOpen && (
-        <div className="fixed inset-0 z-40 bg-black/40 md:hidden">
+        <div className="fixed inset-0 z-40 md:hidden">
+          {/* Background overlay - must be first so sidebar is on top */}
+          <div
+            className="absolute inset-0 bg-black/40"
+            onClick={() => setSidebarOpen(false)}
+          />
+          {/* Sidebar panel - comes after to be on top */}
           <div className="absolute left-0 top-0 h-full w-72 bg-gray-50 border-r border-gray-200 shadow-xl">
             <Sidebar
               className="h-full"
@@ -54,19 +60,16 @@ export default function Home() {
               openFileId={openFileId}
               onSelectFolder={selectedFolderId => {
                 setSelectedFolderId(selectedFolderId);
-                setSidebarOpen(false);
+                // Don't close sidebar when selecting folders - let user expand them
               }}
               onOpenFile={fileId => {
                 setOpenFileId(fileId);
+                // Close sidebar when opening a file for editing
                 setSidebarOpen(false);
               }}
               onClose={() => setSidebarOpen(false)}
             />
           </div>
-          <div
-            className="absolute inset-0"
-            onClick={() => setSidebarOpen(false)}
-          />
         </div>
       )}
 
