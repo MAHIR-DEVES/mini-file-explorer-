@@ -115,3 +115,9 @@ main panel takes full width.
 ---
 
 Built for Webbly Media — May 2026
+
+## Project Preview
+
+Here is a quick look at the Mini File Explorer interface:
+
+![Mini File Explorer UI](./image.png)
