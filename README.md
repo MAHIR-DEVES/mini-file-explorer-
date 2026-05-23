@@ -120,4 +120,4 @@ Built for Webbly Media — May 2026
 
 Here is a quick look at the Mini File Explorer interface:
 
-![Mini File Explorer UI](/image-1.png)
+![Mini File Explorer UI](./public/image-1.png)
