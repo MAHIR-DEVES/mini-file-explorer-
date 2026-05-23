@@ -63,7 +63,7 @@ const FileEditor = ({ file, onSave, onClose }: FileEditorProps) => {
         value={content}
         onChange={e => handleChange(e.target.value)}
         placeholder="Start typing..."
-        className="flex-1 p-4 text-sm font-mono text-gray-800 resize-none outline-none"
+        className="flex-1 min-h-0 p-4 text-sm font-mono text-gray-800 resize-none outline-none overflow-auto"
       />
 
       {/* Footer */}
